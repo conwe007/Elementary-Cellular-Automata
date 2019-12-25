@@ -8,15 +8,10 @@
 int main(int argc, char* argv[])
 {
 	// ./executale_name [-c] [# of cells] [-t] [amount of time] [-i] [0-1: weighted random seeding] [-u] [rule] [-p] [-w] [output file name] [-r] [input file name]
-
 	args_t* args = initialize_args();
-
 	populate_args(args, argc, argv);
-
-	cells_t* cells;
-
-	evaluate_args(cells, args);
-
+	
+	cells_t* cells = evaluate_args(cells, args);
 	destroy_args(args);
 	destroy_cells(cells);
 
@@ -149,15 +144,16 @@ cells_t* create_cells(args_t* args)
 	cells->num_cells = args->num_cells;
 	cells->num_time = args->num_time;
 	cells->rule_dec = args->rule;
-	memcpy(cells->rule_bin, dec2bin(cells->rule_dec), sizeof(cells->rule_bin));
+	cells->rule_bin = (int*)malloc(sizeof(int) * RULE_BIN_SIZE);
+	cells->rule_bin = dec2bin(cells->rule_dec);
 	cells->weight = args->weight;
 
 	// allocate space for board and initialize all cells to 0
-	cells->board = (int**)malloc(sizeof(int[cells->num_time]));
+	cells->board = (int**)malloc(sizeof(int*) * cells->num_time);
 
 	for(int time = 0; time < cells->num_time; time++)
 	{
-		cells->board[time] = (int*)malloc(sizeof(int[cells->num_cells]));
+		cells->board[time] = (int*)malloc(sizeof(int) * cells->num_cells);
 
 		for(int cell = 0; cell < cells->num_cells; cell++)
 		{
@@ -286,6 +282,7 @@ cells_t* read_cells(args_t* args)
 	}
 
 	// determine number of cells in the file, width
+	args->num_cells = 0;
 	while(fgetc(fp_r) != '\n')
 	{
 		args->num_cells++;
@@ -294,6 +291,7 @@ cells_t* read_cells(args_t* args)
 	fseek(fp_r, 0, SEEK_SET);
 
 	// determine amount of time in the file, depth
+	args->num_time = 0;
 	char dump[args->num_cells];
 	while(fgets(dump, INT_MAX, fp_r) != NULL)
 	{
@@ -317,7 +315,7 @@ cells_t* read_cells(args_t* args)
 }
 
 // execute the program based on the arguments provided by the user
-void evaluate_args(cells_t* cells, args_t* args)
+cells_t* evaluate_args(cells_t* cells, args_t* args)
 {
 	if(args->read_file == 1)
 	{
@@ -337,12 +335,14 @@ void evaluate_args(cells_t* cells, args_t* args)
 	{
 		print_cells(cells, ' ', 'O');
 	}
+
+	return cells;
 }
 
 // converts an integer from 0-255 into an 8 element binary array
 int* dec2bin(int dec)
 {
-	int* bin = (int*)malloc(sizeof(int[8]));
+	int* bin = (int*)malloc(sizeof(int) * RULE_BIN_SIZE);
 
 	if(dec > 255 || dec < 0)
 	{
@@ -358,6 +358,18 @@ int* dec2bin(int dec)
 	}
 
 	return bin;
+}
+
+// print decimal rule in args, decimal rule in cells, and binary rule in cells
+void print_rule(cells_t* cells, args_t* args)
+{
+	fprintf(stderr, "args rule: %i\ncells rule_dec: %i\ncells rule_bin: ", args->rule, cells->rule_dec);
+
+	for(int i = 0; i < 8; i++)
+	{
+		fprintf(stderr, "%i ", cells->rule_bin[i]);
+	}
+	fprintf(stderr, "\n");
 }
 
 // print values of elements or argument structure
