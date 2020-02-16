@@ -1,0 +1,17 @@
+#ifndef __CONSTANTS_H
+#define __CONSTANTS_H
+
+#define RULE_BIN_SIZE 8
+#define DEFAULT_NUM_CELLS 10
+#define DEFAULT_NUM_TIME 10
+#define DEFAULT_RULE 86
+#define SINGLE_SEED -1.0
+#define FILENAME_SIZE 1024
+#define WINDOW_NAME_SIZE 1024
+#define PIXEL_PTR_SCALAR 4
+#define OFF_COLOR 0x00
+#define ON_COLOR 0xFF
+#define DEFAULT_CELL_SIZE 1
+#define DEFAULT_TIME_STEP 1
+
+#endif
