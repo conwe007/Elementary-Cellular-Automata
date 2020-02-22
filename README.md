@@ -11,7 +11,7 @@ $ make
 ```
 to compile this program. This program compiles on Unix with gcc 7.4.0. SDL must be installed on the compiling machine. To install SDL, see https://wiki.libsdl.org/Installation
 ### To Execute
-This project allows for multiple different flags to be specified at runtime. Flags with an argument in brackets afterwards must have both the flag and the argument specified to be valid. The flags are as follows:
+This project allows for multiple different flags to be specified at runtime. All flags are optional. Flags with an argument in brackets afterwards must have both the flag and the argument specified to be valid. The flags are as follows:
 
 -c [number of cells]: Number of cells in the array. Represented as the horizontal width. If this flag is not set, the program defaults to the value specified in cellular_automata.h.
 
